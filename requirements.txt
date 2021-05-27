@@ -1,0 +1,6 @@
+tf_grpc_plugin
+msgpack
+requests
+nltk
+pyyaml
+click

@@ -1,3 +1,5 @@
 .vscode/
 *.pyc
 trace.txt
+*.cf
+output/
