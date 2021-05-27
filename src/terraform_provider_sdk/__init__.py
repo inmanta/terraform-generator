@@ -15,8 +15,3 @@
 
     Contact: code@inmanta.com
 """
-
-from terraform_module_generator.cli import main
-
-if __name__ == "__main__":
-    main()
