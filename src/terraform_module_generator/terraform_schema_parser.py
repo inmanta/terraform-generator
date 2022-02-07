@@ -93,7 +93,7 @@ class TerraformSchemaParser:
             attributes=[
                 Attribute(
                     name="purged",
-                    inmanta_type="string",
+                    inmanta_type="bool",
                     optional=False,
                     default="false",
                     description="Set this to true to purge the related terraform resource.",
@@ -115,6 +115,7 @@ class TerraformSchemaParser:
             "provider",
             schema.provider.block,
             skip_index=True,
+            has_id=False,
         )
         provider.parents = []
         provider.overwrite_ordering_key("0")
@@ -280,6 +281,7 @@ class TerraformSchemaParser:
         raw_name: str,
         schema_block: Any,
         skip_index: bool = False,
+        has_id: bool = True,
     ) -> Entity:
         attributes_mapping = dict()
         relations_mapping = dict()
@@ -297,7 +299,7 @@ class TerraformSchemaParser:
             name=snake_to_pascal(raw_name),
             path=path,
             attributes=attributes,
-            parents=[self.base_entity],
+            parents=[self.base_entity] if has_id else [],
         )
         self.module_builder.add_module_element(entity)
 
@@ -306,6 +308,7 @@ class TerraformSchemaParser:
                 path=path + [make_inmanta_safe(raw_name)],
                 raw_name=make_inmanta_safe(block_type.type_name),
                 schema_block=block_type.block,
+                has_id=has_id,
             )
 
             max_arity = block_type.max_items
@@ -332,7 +335,7 @@ class TerraformSchemaParser:
         plugin = self.build_plugin(entity, attributes_mapping, relations_mapping)
         self.module_builder.add_plugin(plugin)
 
-        if not skip_index:
+        if not skip_index and has_id:
             index = Index(
                 path=entity.path,
                 entity=entity,
