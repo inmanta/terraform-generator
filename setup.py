@@ -15,7 +15,7 @@ def read(fname):
 
 setup(
     name="inmanta-terraform-module-generator",
-    version="0.1.0",
+    version="0.1.1",
     author="Inmanta",
     author_email="code@inmanta.com",
     maintainer="Inmanta",
