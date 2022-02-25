@@ -1,4 +1,4 @@
-inmanta_tfplugin
+inmanta-tfplugin
 tf_grpc_plugin
 msgpack
 requests
