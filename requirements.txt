@@ -1,7 +1,7 @@
 inmanta-tfplugin
-tf_grpc_plugin
+inmanta-module-factory
 msgpack
 requests
 nltk
-pyyaml
 click
+PyYAML

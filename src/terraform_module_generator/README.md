@@ -53,8 +53,8 @@ By %(author)s (%(contact)s)
 ```python
 from pathlib import Path
 
-from inmanta_module_builder.inmanta.module import Module
-from inmanta_module_builder.inmanta_module_builder import InmantaModuleBuilder
+from inmanta_module_factory.inmanta.module import Module
+from inmanta_module_factory.builder import InmantaModuleBuilder
 from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
 from terraform_provider_sdk.terraform_provider_installer import ProviderInstaller
 from terraform_provider_sdk.terraform_resource_client import TerraformResourceClient
