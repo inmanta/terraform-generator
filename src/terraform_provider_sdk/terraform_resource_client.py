@@ -21,8 +21,8 @@ import threading
 from typing import IO, Any, List
 
 import grpc
-import tfplugin5.tfplugin5_pb2 as tfplugin5_pb2
-import tfplugin5.tfplugin5_pb2_grpc as tfplugin5_pb2_grpc
+import inmanta_tfplugin.tfplugin5_pb2 as tfplugin5_pb2
+import inmanta_tfplugin.tfplugin5_pb2_grpc as tfplugin5_pb2_grpc
 
 from terraform_provider_sdk.exceptions import PluginInitException
 

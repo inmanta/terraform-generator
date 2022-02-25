@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import Optional
 
 import click
+from inmanta_module_factory.builder import InmantaModuleBuilder
+from inmanta_module_factory.helpers.const import ASL_2_0_LICENSE, EULA_LICENSE
+from inmanta_module_factory.inmanta.module import Module
 
-from inmanta_module_builder.helpers.const import ASL_2_0_LICENSE, EULA_LICENSE
-from inmanta_module_builder.inmanta.module import Module
-from inmanta_module_builder.inmanta_module_builder import InmantaModuleBuilder
 from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
 from terraform_provider_sdk.terraform_provider_installer import ProviderInstaller
 from terraform_provider_sdk.terraform_resource_client import TerraformResourceClient
@@ -45,7 +45,7 @@ def generate_module(
     client.close()
 
     module = Module(type, version, license=license)
-    module_builder = InmantaModuleBuilder(module, Path(output_dir))
+    module_builder = InmantaModuleBuilder(module)
 
     terraform_schema_parser = TerraformSchemaParser(
         module_builder, namespace, type, version, module_name=type
@@ -53,7 +53,7 @@ def generate_module(
     terraform_schema_parser.parse_module(schema)
 
     module_builder.generate_module(
-        True, copyright_header_template=copyright_header_tmpl
+        Path(output_dir), True, copyright_header_template=copyright_header_tmpl
     )
 
 

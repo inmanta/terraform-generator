@@ -7,20 +7,20 @@ import string
 from textwrap import dedent, indent
 from typing import Any, Dict, List, Tuple
 
-from inmanta_module_builder.helpers.const import INMANTA_RESERVED_KEYWORDS
-from inmanta_module_builder.inmanta.attribute import (
+from inmanta_module_factory.builder import InmantaModuleBuilder
+from inmanta_module_factory.helpers.const import INMANTA_RESERVED_KEYWORDS
+from inmanta_module_factory.inmanta.attribute import (
     Attribute,
     InmantaAttributeType,
     InmantaPrimitiveList,
 )
-from inmanta_module_builder.inmanta.entity import Entity
-from inmanta_module_builder.inmanta.entity_relation import EntityRelation
-from inmanta_module_builder.inmanta.implement import Implement
-from inmanta_module_builder.inmanta.implementation import Implementation
-from inmanta_module_builder.inmanta.index import Index
-from inmanta_module_builder.inmanta.module_element import DummyModuleElement
-from inmanta_module_builder.inmanta.plugin import Plugin, PluginArgument
-from inmanta_module_builder.inmanta_module_builder import InmantaModuleBuilder
+from inmanta_module_factory.inmanta.entity import Entity
+from inmanta_module_factory.inmanta.entity_relation import EntityRelation
+from inmanta_module_factory.inmanta.implement import Implement
+from inmanta_module_factory.inmanta.implementation import Implementation
+from inmanta_module_factory.inmanta.index import Index
+from inmanta_module_factory.inmanta.module_element import DummyModuleElement
+from inmanta_module_factory.inmanta.plugin import Plugin, PluginArgument
 
 
 def snake_to_pascal(name: str) -> str:

@@ -53,8 +53,8 @@ By %(author)s (%(contact)s)
 ```python
 from pathlib import Path
 
-from inmanta_module_builder.inmanta.module import Module
-from inmanta_module_builder.inmanta_module_builder import InmantaModuleBuilder
+from inmanta_module_factory.inmanta.module import Module
+from inmanta_module_factory.builder import InmantaModuleBuilder
 from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
 from terraform_provider_sdk.terraform_provider_installer import ProviderInstaller
 from terraform_provider_sdk.terraform_resource_client import TerraformResourceClient
@@ -84,16 +84,14 @@ def generate_model(namespace: str, type: str, version: str) -> str:
     client.close()
 
     module = Module(type, version)
-    module_builder = InmantaModuleBuilder(
-        module, Path(OUTPUT_PATH)
-    )
+    module_builder = InmantaModuleBuilder(module)
 
     terraform_schema_parser = TerraformSchemaParser(
         module_builder, namespace, type, version, module_name=type
     )
     terraform_schema_parser.parse_module(schema)
 
-    module_builder.generate_module(True)
+    module_builder.generate_module(Path(OUTPUT_PATH), True)
 
 
 generate_model("hashicorp", "local", "2.1.0")
