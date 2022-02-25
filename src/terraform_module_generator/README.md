@@ -84,16 +84,14 @@ def generate_model(namespace: str, type: str, version: str) -> str:
     client.close()
 
     module = Module(type, version)
-    module_builder = InmantaModuleBuilder(
-        module, Path(OUTPUT_PATH)
-    )
+    module_builder = InmantaModuleBuilder(module)
 
     terraform_schema_parser = TerraformSchemaParser(
         module_builder, namespace, type, version, module_name=type
     )
     terraform_schema_parser.parse_module(schema)
 
-    module_builder.generate_module(True)
+    module_builder.generate_module(Path(OUTPUT_PATH), True)
 
 
 generate_model("hashicorp", "local", "2.1.0")

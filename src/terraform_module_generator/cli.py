@@ -45,7 +45,7 @@ def generate_module(
     client.close()
 
     module = Module(type, version, license=license)
-    module_builder = InmantaModuleBuilder(module, Path(output_dir))
+    module_builder = InmantaModuleBuilder(module)
 
     terraform_schema_parser = TerraformSchemaParser(
         module_builder, namespace, type, version, module_name=type
@@ -53,7 +53,7 @@ def generate_module(
     terraform_schema_parser.parse_module(schema)
 
     module_builder.generate_module(
-        True, copyright_header_template=copyright_header_tmpl
+        Path(output_dir), True, copyright_header_template=copyright_header_tmpl
     )
 
 
