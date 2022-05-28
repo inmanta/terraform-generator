@@ -3,3 +3,4 @@
 trace.txt
 *.cf
 output/
+*.egg-info/
