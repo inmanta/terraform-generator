@@ -323,10 +323,16 @@ class TerraformSchemaParser:
         self.module_builder.add_plugin(plugin)
 
         if not skip_index and has_id:
+            inmanta_id = next(
+                attribute
+                for attribute in self.base_entity.attributes
+                if attribute.name == "inmanta_id"
+            )
+
             index = Index(
                 path=entity.path,
                 entity=entity,
-                fields=self.base_entity.attributes[:1],
+                fields=[inmanta_id],
             )
             self.module_builder.add_module_element(index)
 
