@@ -4,13 +4,14 @@
     :license: Inmanta EULA
 """
 import subprocess
+import sys
 from pathlib import Path
 
 
 def test_generate_module(tmp_path: Path) -> None:
     result = subprocess.run(
         [
-            "python",
+            sys.executable,
             "src/__init__.py",
             "--namespace=hashicorp",
             "--type=local",
@@ -24,7 +25,12 @@ def test_generate_module(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
 
     result = subprocess.run(
-        ["pytest", "tests"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests",
+        ],
         cwd=str(tmp_path / "local"),
         stderr=subprocess.PIPE,
         universal_newlines=True,

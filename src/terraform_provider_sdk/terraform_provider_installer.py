@@ -14,7 +14,7 @@
     limitations under the License.
 
     Contact: code@inmanta.com
-"""
+"""  # noqa: C801
 import hashlib
 import platform
 import tempfile
