@@ -1,0 +1,5 @@
+pipeline_template: ci/inmanta-tools/Jenkinsfile-integration-tests
+repo_name: terraform-generator
+directories_to_lint:
+  - src
+  - tests

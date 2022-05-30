@@ -1,0 +1,3 @@
+pipeline_template: ci/inmanta-tools/Jenkinsfile-integration-tests
+repo_name: terraform-generator
+public: true
