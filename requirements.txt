@@ -1,6 +1,6 @@
 inmanta-tfplugin==5.2.0
 inmanta-module-factory==2.2.0
-msgpack==1.0.3
+msgpack==1.0.4
 requests==2.27.1
 nltk==3.7
 click==8.1.3
