@@ -29,7 +29,7 @@ from terraform_provider_sdk.exceptions import (
     InstallerNotReadyException,
 )
 
-BASE_URL = "https://registry.terraform.io/v1/providers/"
+BASE_URL = "https://registry.terraform.io/v1/providers"
 
 
 class ProviderInstaller:
