@@ -1,5 +1,6 @@
 inmanta-tfplugin==5.2.0
 inmanta-module-factory==2.2.0
+inmanta-module-terraform==1.1.0
 msgpack==1.0.4
 requests==2.28.0
 nltk==3.7
