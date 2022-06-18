@@ -14,8 +14,8 @@ class AttributeMock:
         /proto/inmanta_tfplugin/tfplugin5.proto#L90
     """
 
+    name: str
     type: bytes
-    name: str = ""
     description: str = ""
     required: bool = False
     optional: bool = False

@@ -35,6 +35,7 @@ class CollectionAttribute(Attribute):
     @classmethod
     def get_inner_type(cls, schema: Any) -> Attribute:
         mock = AttributeMock(
+            name=schema.name,
             type=cls.get_inner_type_expression(schema),
         )
         return Attribute.build_attribute(mock)

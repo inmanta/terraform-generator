@@ -3,7 +3,10 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
+from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
+from inmanta_module_factory.inmanta import EntityField
+from inmanta_module_factory.builder import InmantaModuleBuilder
 
 
 class Attribute:
@@ -18,6 +21,13 @@ class Attribute:
         self.optional: bool = schema.optional
         self.computed: bool = schema.computed
         self.deprecated: bool = schema.deprecated
+
+    @abstractmethod
+    def get_entity_field(self, module_builder: InmantaModuleBuilder) -> EntityField:
+        """
+        Return the entity field corresponding to this entity which should
+        be added to the entity it is attached to.
+        """
 
     @classmethod
     def register_attribute_type(
