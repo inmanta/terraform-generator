@@ -12,10 +12,10 @@ import click
 from inmanta_module_factory.builder import InmantaModuleBuilder
 from inmanta_module_factory.helpers.const import ASL_2_0_LICENSE, EULA_LICENSE
 from inmanta_module_factory.inmanta.module import Module
+from inmanta_plugins.terraform.tf.terraform_provider import TerraformProvider
+from inmanta_plugins.terraform.tf.terraform_provider_installer import ProviderInstaller
 
 from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
-from terraform_provider_sdk.terraform_provider_installer import ProviderInstaller
-from terraform_provider_sdk.terraform_resource_client import TerraformResourceClient
 
 AVAILABLE_LICENSES = (
     ASL_2_0_LICENSE,
@@ -37,12 +37,10 @@ def generate_module(
     installer.download(working_dir + f"/{namespace}-{type}-{version}")
     installed = installer.install(working_dir, force=True)
 
-    client = TerraformResourceClient(
+    with TerraformProvider(
         installed, working_dir + f"/{namespace}-{type}-{version}.log"
-    )
-    client.open()
-    schema = client.schema
-    client.close()
+    ) as provider:
+        schema = provider.schema
 
     module = Module(type, version, license=license)
     module_builder = InmantaModuleBuilder(module)

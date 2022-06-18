@@ -55,9 +55,10 @@ from pathlib import Path
 
 from inmanta_module_factory.inmanta.module import Module
 from inmanta_module_factory.builder import InmantaModuleBuilder
+from inmanta_plugins.terraform.tf.terraform_provider import TerraformProvider
+from inmanta_plugins.terraform.tf.terraform_provider_installer import ProviderInstaller
+
 from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
-from terraform_provider_sdk.terraform_provider_installer import ProviderInstaller
-from terraform_provider_sdk.terraform_resource_client import TerraformResourceClient
 
 DOWNLOAD_PATH = "/tmp/terraform-providers/download"
 INSTALL_PATH = "/tmp/terraform-providers/install"
@@ -76,12 +77,10 @@ def generate_model(namespace: str, type: str, version: str) -> str:
     downloaded = installer.download(DOWNLOAD_PATH + f"/{namespace}-{type}-{version}")
     installed = installer.install(INSTALL_PATH, force=True)
 
-    client = TerraformResourceClient(
-        installed, LOGGING_PATH + f"/{namespace}-{type}-{version}"
-    )
-    client.open()
-    schema = client.schema
-    client.close()
+    with TerraformProvider(
+        installed, LOGGING_PATH + f"/{namespace}-{type}-{version}.log"
+    ) as provider:
+        schema = provider.schema
 
     module = Module(type, version)
     module_builder = InmantaModuleBuilder(module)

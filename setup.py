@@ -30,6 +30,7 @@ setup(
     install_requires=[
         "inmanta-tfplugin",
         "inmanta-module-factory",
+        "inmanta-module-terraform",
         "msgpack",
         "requests",
         "nltk",
