@@ -28,7 +28,6 @@ setup(
     include_package_data=False,
     python_requires="~=3.9",
     install_requires=[
-        "inmanta-tfplugin",
         "inmanta-module-factory",
         "inmanta-module-terraform",
         "msgpack",
