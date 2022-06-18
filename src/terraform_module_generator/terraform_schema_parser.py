@@ -26,6 +26,8 @@ from inmanta_module_factory.inmanta.types import (
     InmantaType,
 )
 
+from terraform_module_generator.schema.module import Module
+
 
 def config_plugin_name(entity: Entity) -> str:
     return f"get_{'_'.join(entity.path + [entity.name.lower()])}_config"
@@ -73,6 +75,8 @@ class TerraformSchemaParser:
         self.module_builder.add_module_element(self.base_entity)
 
     def parse_module(self, schema: Any):
+        module = Module(self.module_name, schema)
+
         # Resource base entity
         resource_base_entity = Entity(
             name="Resource",

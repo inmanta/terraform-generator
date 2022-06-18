@@ -1,0 +1,24 @@
+"""
+    :copyright: 2022 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+"""
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class AttributeMock:
+    """
+    Mock object for https://github.com/inmanta/inmanta-tfplugin/blob
+        /7269bc7d28d751b5dc110161dae29a6209c3fb63/docs/tf_grpc_plugin
+        /proto/inmanta_tfplugin/tfplugin5.proto#L90
+    """
+
+    type: bytes
+    name: str = ""
+    description: str = ""
+    required: bool = False
+    optional: bool = False
+    computed: bool = False
+    sensitive: bool = False
+    deprecated: bool = False
