@@ -15,7 +15,7 @@ from inmanta_module_factory.inmanta.module import Module
 from inmanta_plugins.terraform.tf.terraform_provider import TerraformProvider
 from inmanta_plugins.terraform.tf.terraform_provider_installer import ProviderInstaller
 
-from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
+from terraform_module_generator import schema
 
 AVAILABLE_LICENSES = (
     ASL_2_0_LICENSE,
@@ -40,15 +40,14 @@ def generate_module(
     with TerraformProvider(
         installed, working_dir + f"/{namespace}-{type}-{version}.log"
     ) as provider:
-        schema = provider.schema
+        provider_schema = provider.schema
 
     module = Module(type, version, license=license)
     module_builder = InmantaModuleBuilder(module)
 
-    terraform_schema_parser = TerraformSchemaParser(
-        module_builder, namespace, type, version, module_name=type
-    )
-    terraform_schema_parser.parse_module(schema)
+    terraform_module = schema.Module(name=type, schema=provider_schema)
+    for resource in terraform_module.resources:
+        resource.block.get_entity(module_builder)
 
     module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl

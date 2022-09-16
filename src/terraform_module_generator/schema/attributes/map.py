@@ -6,12 +6,12 @@
 import re
 from typing import Any
 
+from inmanta_module_factory import builder, inmanta
+
 from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 from .base import attribute
 from .collection import CollectionAttribute
-
-from inmanta_module_factory import inmanta, builder
 
 
 def is_map(attribute: Any) -> bool:
@@ -28,7 +28,9 @@ class MapAttribute(CollectionAttribute):
     regex = re.compile(r"map\((.+)\)")
 
     @cache_method_result
-    def get_entity_field(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.EntityField:
+    def get_entity_field(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.EntityField:
         inner_type_field = super().get_entity_field(module_builder)
 
         if isinstance(inner_type_field, inmanta.EntityRelation):
@@ -38,7 +40,7 @@ class MapAttribute(CollectionAttribute):
                     name=f"{self.name}_key",
                     inmanta_type=inmanta.InmantaStringType,
                     optional=False,
-                    description="(required) The key to identify this instance."
+                    description="(required) The key to identify this instance.",
                 )
             )
 

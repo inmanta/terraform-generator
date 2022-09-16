@@ -27,15 +27,16 @@ class TupleAttribute(StructureAttribute):
     regex = re.compile(r"tuple\((.+)\)")
 
     @classmethod
-    def get_inner_attributes(cls, schema: Any) -> List[Attribute]:
+    def get_inner_attributes(cls, path: List[str], schema: Any) -> List[Attribute]:
         raw_inner_attributes_expression = cls.get_inner_attributes_expression(schema)
         inner_attributes_expression: list = json.loads(raw_inner_attributes_expression)
         return [
             Attribute.build_attribute(
+                path,
                 AttributeMock(
                     name=f"attr{i}",
                     type=json.dumps(value).strip().encode("utf-8"),
-                )
+                ),
             )
             for i, value in enumerate(inner_attributes_expression)
         ]

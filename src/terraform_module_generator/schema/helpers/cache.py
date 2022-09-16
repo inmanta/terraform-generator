@@ -1,5 +1,9 @@
-from typing import Any, Callable, Dict, TypeVar
-
+"""
+    :copyright: 2022 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+"""
+from typing import Callable, TypeVar
 
 F = TypeVar("F", bound=Callable)
 
@@ -17,7 +21,7 @@ def cache_method_result(func: F) -> F:
     def cache(self, *args, **kwargs) -> object:
         if not hasattr(self, func_result_attribute):
             setattr(self, func_result_attribute, func(self, *args, **kwargs))
-        
+
         return getattr(self, func_result_attribute)
-    
+
     return cache

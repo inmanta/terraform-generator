@@ -5,39 +5,47 @@
 """
 from abc import abstractclassmethod
 from typing import Any, List
+
+from inmanta_module_factory import builder, inmanta
+from inmanta_module_factory.helpers.utils import inmanta_entity_name, inmanta_safe_name
 from regex import Pattern
-from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 from terraform_module_generator.schema.attributes.base import Attribute
+from terraform_module_generator.schema.helpers.cache import cache_method_result
 
-
-from inmanta_module_factory import inmanta, builder
-from inmanta_module_factory.helpers.utils import inmanta_entity_name, inmanta_safe_name
 
 class StructureAttribute(Attribute):
     legacy_regex: Pattern[str]
     regex: Pattern[str]
 
-    def __init__(self, schema: Any) -> None:
-        super().__init__(schema)
-        self.inner_attributes = self.get_inner_attributes(schema)
+    def __init__(self, path: List[str], schema: Any) -> None:
+        super().__init__(path, schema)
+        self.inner_attributes = self.get_inner_attributes(
+            path + [inmanta_safe_name(self.name)], schema
+        )
 
     @cache_method_result
-    def get_entity(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.Entity:
+    def get_entity(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.Entity:
         entity = inmanta.Entity(
             name=inmanta_entity_name(self.name),
-            path=[],  # TODO
+            path=self.path,
             description=self.description,
         )
         module_builder.add_module_element(entity)
 
         for attribute in self.inner_attributes:
-            entity.attach_field(attribute.get_entity_field(module_builder))
+            field = attribute.get_entity_field(module_builder)
+            entity.attach_field(field)
+            field.attach_entity(entity)
 
         return entity
 
     @cache_method_result
-    def get_entity_field(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.EntityField:
+    def get_entity_field(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.EntityField:
         entity = self.get_entity(module_builder)
         relation = inmanta.EntityRelation(
             name=inmanta_safe_name(self.name),
@@ -69,7 +77,7 @@ class StructureAttribute(Attribute):
         raise ValueError(f"Failed to match type: {t}")
 
     @abstractclassmethod
-    def get_inner_attributes(cls, schema: Any) -> List[Attribute]:
+    def get_inner_attributes(cls, path: List[str], schema: Any) -> List[Attribute]:
         """
-        Return a list of inner attribute objects.        
+        Return a list of inner attribute objects.
         """

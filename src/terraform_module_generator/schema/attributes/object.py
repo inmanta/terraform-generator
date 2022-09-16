@@ -6,6 +6,7 @@
 import json
 import re
 from typing import Any, List
+
 from terraform_module_generator.schema.mocks.attribute import AttributeMock
 
 from .base import Attribute, attribute
@@ -26,15 +27,16 @@ class ObjectAttribute(StructureAttribute):
     regex = re.compile(r"object\((.+)\)")
 
     @classmethod
-    def get_inner_attributes(cls, schema: Any) -> List[Attribute]:
+    def get_inner_attributes(cls, path: List[str], schema: Any) -> List[Attribute]:
         raw_inner_attributes_expression = cls.get_inner_attributes_expression(schema)
         inner_attributes_expression: dict = json.loads(raw_inner_attributes_expression)
         return [
             Attribute.build_attribute(
+                path,
                 AttributeMock(
                     type=json.dumps(value).strip().encode("utf-8"),
                     name=key,
-                )
+                ),
             )
             for key, value in inner_attributes_expression.items()
         ]

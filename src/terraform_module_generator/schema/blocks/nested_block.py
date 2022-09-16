@@ -4,12 +4,12 @@
     :license: Inmanta EULA
 """
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
-from terraform_module_generator.schema.helpers.cache import cache_method_result
-
-from terraform_module_generator.schema.blocks import block
 
 from inmanta_module_factory import builder, inmanta
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
+
+from terraform_module_generator.schema.blocks import block
+from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
 class NestedBlock(block.Block):
@@ -17,14 +17,15 @@ class NestedBlock(block.Block):
         str, Tuple[Callable[[Any, bool], Type["NestedBlock"]]]
     ] = dict()
 
-    def __init__(self, schema: Any) -> None:
-        super().__init__(schema)
-        self.name: str = schema.type_name
+    def __init__(self, path: List[str], schema: Any) -> None:
+        super().__init__(schema.type_name, path, schema.block)
         self.min_items: int = schema.min_items
         self.max_items: int = schema.max_items
 
     @cache_method_result
-    def get_entity_relation(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.EntityRelation:
+    def get_entity_relation(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.EntityRelation:
         entity = self.get_entity(module_builder)
         relation = inmanta.EntityRelation(
             name=inmanta_safe_name(self.name),
@@ -70,10 +71,10 @@ class NestedBlock(block.Block):
         ]
 
     @classmethod
-    def build_nested_block(cls, nested_block: Any) -> "NestedBlock":
+    def build_nested_block(cls, path: List[str], nested_block: Any) -> "NestedBlock":
         for condition, attribute_type in cls.get_nested_block_types():
             if condition(nested_block):
-                return attribute_type(nested_block)
+                return attribute_type(path, nested_block)
 
         raise ValueError(
             f"Couldn't find a matching type for nested block {nested_block}"

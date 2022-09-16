@@ -75,7 +75,7 @@ class TerraformSchemaParser:
         self.module_builder.add_module_element(self.base_entity)
 
     def parse_module(self, schema: Any):
-        module = Module(self.module_name, schema)
+        Module(self.module_name, schema)
 
         # Resource base entity
         resource_base_entity = Entity(

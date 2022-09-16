@@ -3,12 +3,12 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
-from typing import Any
+from typing import Any, List
 
 from terraform_module_generator.schema.base import Schema
 
 
 class Resource(Schema):
-    def __init__(self, name: str, schema: Any) -> None:
-        super().__init__(schema)
+    def __init__(self, name: str, path: List[str], schema: Any) -> None:
+        super().__init__(name, path, schema)
         self.name = name

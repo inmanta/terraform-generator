@@ -5,6 +5,7 @@
 """
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
+
 from inmanta_module_factory import inmanta
 from inmanta_module_factory.builder import InmantaModuleBuilder
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
@@ -17,7 +18,8 @@ class Attribute:
         str, Tuple[Callable[[Any, bool], Type["Attribute"]]]
     ] = dict()
 
-    def __init__(self, schema: Any) -> None:
+    def __init__(self, path: List[str], schema: Any) -> None:
+        self.path = path
         self.name: str = schema.name
         self.description: str = schema.description
         self.required: bool = schema.required
@@ -26,13 +28,17 @@ class Attribute:
         self.deprecated: bool = schema.deprecated
 
     @abstractmethod
-    def inmanta_attribute_type(self, module_builder: InmantaModuleBuilder) -> inmanta.InmantaType:
+    def inmanta_attribute_type(
+        self, module_builder: InmantaModuleBuilder
+    ) -> inmanta.InmantaType:
         """
         Return the inmanta type corresponding to this attribute
         """
 
     @cache_method_result
-    def get_entity_field(self, module_builder: InmantaModuleBuilder) -> inmanta.EntityField:
+    def get_entity_field(
+        self, module_builder: InmantaModuleBuilder
+    ) -> inmanta.EntityField:
         """
         Return the entity field corresponding to this entity which should
         be added to the entity it is attached to.
@@ -83,10 +89,10 @@ class Attribute:
         ]
 
     @classmethod
-    def build_attribute(cls, attribute: Any) -> "Attribute":
+    def build_attribute(cls, path: List[str], attribute: Any) -> "Attribute":
         for condition, attribute_type in cls.get_attribute_types():
             if condition(attribute):
-                return attribute_type(attribute)
+                return attribute_type(path, attribute)
 
         raise ValueError(f"Couldn't find a matching type for attribute {attribute}")
 
