@@ -5,8 +5,11 @@
 """
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
-from inmanta_module_factory.inmanta import EntityField
+from inmanta_module_factory import inmanta
 from inmanta_module_factory.builder import InmantaModuleBuilder
+from inmanta_module_factory.helpers.utils import inmanta_safe_name
+
+from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
 class Attribute:
@@ -23,11 +26,34 @@ class Attribute:
         self.deprecated: bool = schema.deprecated
 
     @abstractmethod
-    def get_entity_field(self, module_builder: InmantaModuleBuilder) -> EntityField:
+    def inmanta_attribute_type(self, module_builder: InmantaModuleBuilder) -> inmanta.InmantaType:
+        """
+        Return the inmanta type corresponding to this attribute
+        """
+
+    @cache_method_result
+    def get_entity_field(self, module_builder: InmantaModuleBuilder) -> inmanta.EntityField:
         """
         Return the entity field corresponding to this entity which should
         be added to the entity it is attached to.
         """
+        description = []
+        if self.computed:
+            description.append("(computed)")
+        if self.deprecated:
+            description.append("(deprecated)")
+        if self.required:
+            description.append("(required)")
+
+        description.append(self.description)
+
+        return inmanta.Attribute(
+            name=inmanta_safe_name(self.name),
+            inmanta_type=self.inmanta_attribute_type(module_builder),
+            optional=self.optional,
+            default="null" if self.optional else None,
+            description=" ".join(description),
+        )
 
     @classmethod
     def register_attribute_type(

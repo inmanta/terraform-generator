@@ -4,20 +4,43 @@
     :license: Inmanta EULA
 """
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
+from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 from terraform_module_generator.schema.blocks import block
 
+from inmanta_module_factory import builder, inmanta
+from inmanta_module_factory.helpers.utils import inmanta_safe_name
 
-class NestedBlock:
+
+class NestedBlock(block.Block):
     __nested_block_types: Dict[
         str, Tuple[Callable[[Any, bool], Type["NestedBlock"]]]
     ] = dict()
 
     def __init__(self, schema: Any) -> None:
+        super().__init__(schema)
         self.name: str = schema.type_name
         self.min_items: int = schema.min_items
         self.max_items: int = schema.max_items
-        block.Block.__init__(self, schema.block)
+
+    @cache_method_result
+    def get_entity_relation(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.EntityRelation:
+        entity = self.get_entity(module_builder)
+        relation = inmanta.EntityRelation(
+            name=inmanta_safe_name(self.name),
+            path=entity.path,
+            cardinality=(self.min_items, self.max_items),
+            description=self.description,
+            peer=inmanta.EntityRelation(
+                name="",
+                path=entity.path,
+                cardinality=(1, 1),
+                entity=entity,
+            ),
+        )
+        module_builder.add_module_element(relation)
+
+        return relation
 
     @classmethod
     def register_nested_block_type(

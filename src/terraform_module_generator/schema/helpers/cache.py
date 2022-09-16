@@ -4,19 +4,20 @@ from typing import Any, Callable, Dict, TypeVar
 F = TypeVar("F", bound=Callable)
 
 
-def cache(func: F) -> F:
+def cache_method_result(func: F) -> F:
     """
-    Cache the response of the function and returns it for all the next
-    calls to the function.  This doesn't take into account the arguments
-    that are given to the function except for the first one, which is
-    expected to be 'self'.  No matter what, the method of the object will
-    be called at most once.
+    Decorator for objects methods.  When added to a method, the method body
+    will only be called once, and the response object will be attached to the
+    object.  If the method is called a second time, the result is taken from
+    the value stored on the object.
     """
-    res: Dict[Any, Any] = {}
-    def cache_or_call(self, *args, **kwargs) -> Any:
-        if self not in res:
-            res[self] = func(self, *args, **kwargs)
+    func_name = func.__name__
+    func_result_attribute = f"__{func_name}_result"
+
+    def cache(self, *args, **kwargs) -> object:
+        if not hasattr(self, func_result_attribute):
+            setattr(self, func_result_attribute, func(self, *args, **kwargs))
         
-        return res[self]
+        return getattr(self, func_result_attribute)
     
-    return cache_or_call
+    return cache

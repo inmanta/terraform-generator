@@ -6,7 +6,7 @@
 from typing import Any
 
 from terraform_module_generator.schema.attributes.base import Attribute, attribute
-from inmanta_module_factory.inmanta import InmantaStringType, EntityField
+from inmanta_module_factory import inmanta
 from inmanta_module_factory.builder import InmantaModuleBuilder
 
 
@@ -16,6 +16,5 @@ def is_string(attribute: Any) -> bool:
 
 @attribute(index="abc-string-z", condition=is_string)
 class StringAttribute(Attribute):
-    
-    def get_entity_field(self, module_builder: InmantaModuleBuilder) -> EntityField:
-        return InmantaStringType
+    def inmanta_attribute_type(self, module_builder: InmantaModuleBuilder) -> inmanta.InmantaType:
+        return inmanta.InmantaStringType
