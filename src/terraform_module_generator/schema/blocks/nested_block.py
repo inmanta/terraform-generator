@@ -3,6 +3,7 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
+import typing
 from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
 
 from inmanta_module_factory import builder, inmanta
@@ -33,7 +34,7 @@ class NestedBlock(block.Block):
             cardinality=(self.min_items, self.max_items),
             description=self.description,
             peer=inmanta.EntityRelation(
-                name="",
+                name=f"_parent",
                 path=entity.path,
                 cardinality=(1, 1),
                 entity=entity,
@@ -42,6 +43,21 @@ class NestedBlock(block.Block):
         module_builder.add_module_element(relation)
 
         return relation
+
+    @cache_method_result
+    def get_config_block_attributes(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> typing.Dict[str, str]:
+        attributes = super().get_config_block_attributes(module_builder)
+
+        relation_to_parent = self.get_entity_relation(module_builder).peer
+        parent_entity = relation_to_parent.entity
+
+        attributes["name"] = f'"{self.name}"'
+        attributes["parent"] = (
+            "self." + relation_to_parent.name + "."
+        )
+        return attributes
 
     @classmethod
     def register_nested_block_type(

@@ -56,8 +56,8 @@ class Attribute:
         return inmanta.Attribute(
             name=inmanta_safe_name(self.name),
             inmanta_type=self.inmanta_attribute_type(module_builder),
-            optional=self.optional,
-            default="null" if self.optional else None,
+            optional=self.optional and not self.computed,
+            default="null" if self.optional and not self.computed else None,
             description=" ".join(description),
         )
 

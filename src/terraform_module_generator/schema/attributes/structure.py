@@ -53,7 +53,7 @@ class StructureAttribute(Attribute):
             cardinality=(0 if self.optional else 1, 1),
             description=self.description,
             peer=inmanta.EntityRelation(
-                name="",
+                name="_parent",
                 path=entity.path,
                 cardinality=(1, 1),
                 entity=entity,

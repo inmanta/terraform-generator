@@ -37,7 +37,7 @@ class MapAttribute(CollectionAttribute):
             # We must also add a key attribute on the entity, that will be used as key in the map
             inner_type_field.peer.entity.attributes.append(
                 inmanta.Attribute(
-                    name=f"{self.name}_key",
+                    name=f"_map_key",
                     inmanta_type=inmanta.InmantaStringType,
                     optional=False,
                     description="(required) The key to identify this instance.",
