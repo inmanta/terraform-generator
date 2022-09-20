@@ -39,3 +39,19 @@ class ListNestedBlock(NestedBlock):
         attributes["nesting_mode"] = '"list"'
         attributes["key"] = "self." + self.get_list_index_attribute(module_builder).name
         return attributes
+
+    @cache_method_result
+    def get_entity_index(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> typing.Optional[inmanta.Index]:
+        index = inmanta.Index(
+            path=self.get_entity(module_builder).path,
+            entity=self.get_entity(module_builder),
+            fields=[
+                self.get_entity_relation(module_builder).peer,
+                self.get_list_index_attribute(module_builder),
+            ],
+            description="This index ensure that each element of the config tree is unique",
+        )
+        module_builder.add_module_element(index)
+        return index

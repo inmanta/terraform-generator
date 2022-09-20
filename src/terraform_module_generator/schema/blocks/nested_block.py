@@ -31,7 +31,7 @@ class NestedBlock(block.Block):
         entity = self.get_entity(module_builder)
         relation = inmanta.EntityRelation(
             name=inmanta_safe_name(self.name),
-            path=entity.path,
+            path=entity.path,  # Will be overwritten
             cardinality=(self.min_items, self.max_items or None),
             description=self.description,
             peer=inmanta.EntityRelation(
@@ -41,7 +41,6 @@ class NestedBlock(block.Block):
                 entity=entity,
             ),
         )
-        module_builder.add_module_element(relation)
 
         return relation
 
@@ -61,6 +60,23 @@ class NestedBlock(block.Block):
             + const.TERRAFORM_CONFIG_BLOCK_RELATION
         )
         return attributes
+
+    @cache_method_result
+    def get_entity_index(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> typing.Optional[inmanta.Index]:
+        index = inmanta.Index(
+            path=self.get_entity(module_builder).path,
+            entity=self.get_entity(module_builder),
+            fields=[self.get_entity_relation(module_builder).peer],
+            description="This index ensure that each element of the config tree is unique",
+        )
+        module_builder.add_module_element(index)
+        return index
+
+    def add_to_module(self, module_builder: builder.InmantaModuleBuilder) -> None:
+        super().add_to_module(module_builder)
+        self.get_entity_index(module_builder)
 
     @classmethod
     def register_nested_block_type(

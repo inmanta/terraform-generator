@@ -77,6 +77,8 @@ class Block:
 
         for nested_block in self.nested_blocks:
             relation = nested_block.get_entity_relation(module_builder)
+            relation.path = entity.path
+            module_builder.add_module_element(relation)
             entity.attach_field(relation)
             relation.attach_entity(entity)
 
