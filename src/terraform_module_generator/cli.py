@@ -47,7 +47,7 @@ def generate_module(
 
     terraform_module = schema.Module(name=type, schema=provider_schema)
     for resource in terraform_module.resources:
-        resource.block.add_to_module(module_builder)
+        resource.add_to_module(module_builder)
 
     module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl

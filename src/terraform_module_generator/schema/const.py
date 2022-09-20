@@ -10,3 +10,7 @@ TERRAFORM_CONFIG_BLOCK_ENTITY = inmanta.Entity(
     name="Block",
     path=["terraform", "config"],
 )
+TERRAFORM_RESOURCE_ENTITY = inmanta.Entity(
+    name="Resource",
+    path=["terraform"],
+)
