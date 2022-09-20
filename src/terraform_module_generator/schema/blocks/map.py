@@ -36,6 +36,6 @@ class MapNestedBlock(NestedBlock):
         self, module_builder: builder.InmantaModuleBuilder
     ) -> typing.Dict[str, str]:
         attributes = super().get_config_block_attributes(module_builder)
-        attributes["nesting_mode"] = '"list"'
+        attributes["nesting_mode"] = '"map"'
         attributes["key"] = "self." + self.get_map_key_attribute(module_builder).name
         return attributes

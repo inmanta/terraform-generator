@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
 from inmanta_module_factory import builder, inmanta
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
 
+from terraform_module_generator.schema import const
 from terraform_module_generator.schema.blocks import block
 from terraform_module_generator.schema.helpers.cache import cache_method_result
 
@@ -21,7 +22,7 @@ class NestedBlock(block.Block):
     def __init__(self, path: List[str], schema: Any) -> None:
         super().__init__(schema.type_name, path, schema.block)
         self.min_items: int = schema.min_items
-        self.max_items: int = schema.max_items
+        self.max_items: int = schema.max_items  # Zero for no upper bound
 
     @cache_method_result
     def get_entity_relation(
@@ -31,10 +32,10 @@ class NestedBlock(block.Block):
         relation = inmanta.EntityRelation(
             name=inmanta_safe_name(self.name),
             path=entity.path,
-            cardinality=(self.min_items, self.max_items),
+            cardinality=(self.min_items, self.max_items or None),
             description=self.description,
             peer=inmanta.EntityRelation(
-                name=f"_parent",
+                name="_parent",
                 path=entity.path,
                 cardinality=(1, 1),
                 entity=entity,
@@ -51,11 +52,13 @@ class NestedBlock(block.Block):
         attributes = super().get_config_block_attributes(module_builder)
 
         relation_to_parent = self.get_entity_relation(module_builder).peer
-        parent_entity = relation_to_parent.entity
 
         attributes["name"] = f'"{self.name}"'
         attributes["parent"] = (
-            "self." + relation_to_parent.name + "."
+            "self."
+            + relation_to_parent.name
+            + "."
+            + const.TERRAFORM_CONFIG_BLOCK_RELATION
         )
         return attributes
 

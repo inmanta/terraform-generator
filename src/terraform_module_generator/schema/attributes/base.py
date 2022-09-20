@@ -3,8 +3,8 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
-from abc import abstractmethod
-from typing import Any, Callable, Dict, List, Tuple, Type, TypeVar
+import abc
+import typing
 
 from inmanta_module_factory import inmanta
 from inmanta_module_factory.builder import InmantaModuleBuilder
@@ -14,20 +14,23 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
 class Attribute:
-    __attribute_types: Dict[
-        str, Tuple[Callable[[Any, bool], Type["Attribute"]]]
+    __attribute_types: typing.Dict[
+        str, typing.Tuple[typing.Callable[[bool], typing.Type["Attribute"]]]
     ] = dict()
 
-    def __init__(self, path: List[str], schema: Any) -> None:
+    def __init__(self, path: typing.List[str], schema: typing.Any) -> None:
         self.path = path
         self.name: str = schema.name
         self.description: str = schema.description
+        self.description_kind: str = schema.description_kind
         self.required: bool = schema.required
         self.optional: bool = schema.optional
         self.computed: bool = schema.computed
         self.deprecated: bool = schema.deprecated
 
-    @abstractmethod
+        self._source_attribute = schema
+
+    @abc.abstractmethod
     def inmanta_attribute_type(
         self, module_builder: InmantaModuleBuilder
     ) -> inmanta.InmantaType:
@@ -36,9 +39,7 @@ class Attribute:
         """
 
     @cache_method_result
-    def get_entity_field(
-        self, module_builder: InmantaModuleBuilder
-    ) -> inmanta.EntityField:
+    def get_attribute(self, module_builder: InmantaModuleBuilder) -> inmanta.Attribute:
         """
         Return the entity field corresponding to this entity which should
         be added to the entity it is attached to.
@@ -63,7 +64,9 @@ class Attribute:
 
     @classmethod
     def register_attribute_type(
-        cls: Type["A"], index: str, condition: Callable[[Any], bool]
+        cls: typing.Type["A"],
+        index: str,
+        condition: typing.Callable[[typing.Any], bool],
     ) -> None:
         if index in cls.__attribute_types:
             raise ValueError(
@@ -76,7 +79,9 @@ class Attribute:
     @classmethod
     def get_attribute_types(
         cls,
-    ) -> List[Tuple[Callable[[Any], bool], Type["Attribute"]]]:
+    ) -> typing.List[
+        typing.Tuple[typing.Callable[[typing.Any], bool], typing.Type["Attribute"]]
+    ]:
         """
         Get all the registered attribute types, ordered by index.
         """
@@ -89,7 +94,9 @@ class Attribute:
         ]
 
     @classmethod
-    def build_attribute(cls, path: List[str], attribute: Any) -> "Attribute":
+    def build_attribute(
+        cls, path: typing.List[str], attribute: typing.Any
+    ) -> "Attribute":
         for condition, attribute_type in cls.get_attribute_types():
             if condition(attribute):
                 return attribute_type(path, attribute)
@@ -97,18 +104,18 @@ class Attribute:
         raise ValueError(f"Couldn't find a matching type for attribute {attribute}")
 
 
-A = TypeVar("A", bound=Attribute)
+A = typing.TypeVar("A", bound=Attribute)
 
 
 def attribute(
-    *, index: str, condition: Callable[[Any], bool]
-) -> Callable[[Type["A"]], Type["A"]]:
+    *, index: str, condition: typing.Callable[[typing.Any], bool]
+) -> typing.Callable[[typing.Type["A"]], typing.Type["A"]]:
     """
     Decorator for all the attribute classes.  It will automatically register it as a possible
     attribute type.  Calling
     """
 
-    def register_attribute(attribute: Type["A"]) -> Type["A"]:
+    def register_attribute(attribute: typing.Type["A"]) -> typing.Type["A"]:
         attribute.register_attribute_type(index, condition)
         return attribute
 

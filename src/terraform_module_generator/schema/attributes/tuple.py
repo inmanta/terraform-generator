@@ -5,7 +5,9 @@
 """
 import json
 import re
-from typing import Any, List
+import typing
+
+from inmanta_module_factory import builder, inmanta
 
 from terraform_module_generator.schema.mocks.attribute import AttributeMock
 
@@ -13,7 +15,7 @@ from .base import Attribute, attribute
 from .structure import StructureAttribute
 
 
-def is_tuple(attribute: Any) -> bool:
+def is_tuple(attribute: typing.Any) -> bool:
     t = attribute.type.decode("utf-8")
     return (
         TupleAttribute.legacy_regex.fullmatch(t) is not None
@@ -26,8 +28,15 @@ class TupleAttribute(StructureAttribute):
     legacy_regex = re.compile(r'\["tuple",(.+)\]')
     regex = re.compile(r"tuple\((.+)\)")
 
+    def inmanta_attribute_type(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.InmantaType:
+        raise NotImplementedError("This should be replaced by a real entity")
+
     @classmethod
-    def get_inner_attributes(cls, path: List[str], schema: Any) -> List[Attribute]:
+    def get_inner_attributes(
+        cls, path: typing.List[str], schema: typing.Any
+    ) -> typing.List[Attribute]:
         raw_inner_attributes_expression = cls.get_inner_attributes_expression(schema)
         inner_attributes_expression: list = json.loads(raw_inner_attributes_expression)
         return [
