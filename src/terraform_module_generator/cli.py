@@ -45,9 +45,14 @@ def generate_module(
     module = Module(type, version, license=license)
     module_builder = InmantaModuleBuilder(module)
 
-    terraform_module = schema.Module(name=type, schema=provider_schema)
-    for resource in terraform_module.resources:
-        resource.add_to_module(module_builder)
+    terraform_module = schema.Module(
+        name=type,
+        schema=provider_schema,
+        namespace=namespace,
+        type=type,
+        version=version,
+    )
+    terraform_module.build(module_builder)
 
     module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl

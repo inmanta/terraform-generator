@@ -67,6 +67,7 @@ class Block:
             name=inmanta_entity_name(self.name),
             path=self.path,
             description=self.description,
+            parents=[const.BASE_ENTITY],
         )
         module_builder.add_module_element(entity)
 
@@ -83,27 +84,6 @@ class Block:
             relation.attach_entity(entity)
 
         return entity
-
-    @cache_method_result
-    def get_config_block_relation(
-        self, module_builder: builder.InmantaModuleBuilder
-    ) -> inmanta.EntityRelation:
-        relation = inmanta.EntityRelation(
-            name=const.TERRAFORM_CONFIG_BLOCK_RELATION,
-            path=self.get_entity(module_builder).path,
-            cardinality=(1, 1),
-            description="Relation to the config block used internally to generate the config tree.",
-            entity=self.get_entity(module_builder),
-            peer=inmanta.EntityRelation(
-                name="",
-                path=self.get_entity(module_builder).path,
-                cardinality=(0, None),
-                entity=const.TERRAFORM_CONFIG_BLOCK_ENTITY,
-            ),
-        )
-        module_builder.add_module_element(relation)
-
-        return relation
 
     @cache_method_result
     def get_config_block_attributes(
@@ -137,7 +117,7 @@ class Block:
         config_block += ")"
         config_block = (
             "self."
-            + self.get_config_block_relation(module_builder).name
+            + const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name
             + " = "
             + config_block
         )
@@ -171,7 +151,7 @@ class Block:
         if not computed_attributes:
             return None
 
-        config_block = self.get_config_block_relation(module_builder).name
+        config_block = const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name
         implementation_body = "\n".join(
             f'self.{attribute.get_attribute(module_builder).name} = self.{config_block}._state["{attribute.name}"]'
             for attribute in computed_attributes
@@ -188,10 +168,29 @@ class Block:
 
         return implementation
 
+    @cache_method_result
+    def get_implement(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.Implement:
+        implementations = [self.get_config_implementation(module_builder)]
+        if self.get_state_implementation(module_builder) is not None:
+            implementations.append(self.get_state_implementation(module_builder))
+
+        implement = inmanta.Implement(
+            path=self.get_config_implementation(module_builder).path,
+            implementation=None,
+            implementations=implementations,
+            entity=self.get_entity(module_builder),
+        )
+        module_builder.add_module_element(implement)
+
+        return implement
+
     def add_to_module(self, module_builder: builder.InmantaModuleBuilder) -> None:
         # Build the two implementations
         self.get_config_implementation(module_builder)
         self.get_state_implementation(module_builder)
+        self.get_implement(module_builder)
 
         # For each nested block, call the add_to_module method
         for nested_block in self.nested_blocks:

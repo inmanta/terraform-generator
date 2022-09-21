@@ -57,7 +57,7 @@ class NestedBlock(block.Block):
             "self."
             + relation_to_parent.name
             + "."
-            + const.TERRAFORM_CONFIG_BLOCK_RELATION
+            + const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name
         )
         return attributes
 
