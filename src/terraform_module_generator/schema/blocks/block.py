@@ -87,11 +87,11 @@ class Block:
 
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder
+        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str],
     ) -> typing.Dict[str, str]:
         attributes = "\n".join(
             [
-                f'"{attribute.name}": self.{attribute.get_attribute(module_builder).name},'
+                f'"{attribute.name}": {attribute.get_serialized_attribute_expression("self", module_builder, imports)},'
                 for attribute in self.attributes
                 if attribute.computed is False
             ]
@@ -109,8 +109,10 @@ class Block:
     def get_config_implementation(
         self, module_builder: builder.InmantaModuleBuilder
     ) -> inmanta.Implementation:
+        imports: typing.Set[str] = set()
+
         config_block = "terraform::config::Block(\n"
-        for key, value in self.get_config_block_attributes(module_builder).items():
+        for key, value in self.get_config_block_attributes(module_builder, imports).items():
             field = f"{key}={value}"
             field = textwrap.indent(field, " " * 4)
             config_block += field + ",\n"
@@ -135,7 +137,10 @@ class Block:
                 "all the non-computed entity attributes to it."
             ),
         )
-        implementation.add_import("::".join(const.TERRAFORM_CONFIG_BLOCK_ENTITY.path))
+        imports.add("::".join(const.TERRAFORM_CONFIG_BLOCK_ENTITY.path))
+        for i in imports:
+            implementation.add_import(i)
+
         module_builder.add_module_element(implementation)
 
         return implementation
@@ -177,7 +182,7 @@ class Block:
             implementations.append(self.get_state_implementation(module_builder))
 
         implement = inmanta.Implement(
-            path=self.get_config_implementation(module_builder).path,
+            path=self.get_entity(module_builder).path,
             implementation=None,
             implementations=implementations,
             entity=self.get_entity(module_builder),

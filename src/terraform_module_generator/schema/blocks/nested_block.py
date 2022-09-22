@@ -46,9 +46,9 @@ class NestedBlock(block.Block):
 
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder
+        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str],
     ) -> typing.Dict[str, str]:
-        attributes = super().get_config_block_attributes(module_builder)
+        attributes = super().get_config_block_attributes(module_builder, imports)
 
         relation_to_parent = self.get_entity_relation(module_builder).peer
 

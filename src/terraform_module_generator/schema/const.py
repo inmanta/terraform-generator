@@ -5,6 +5,11 @@
 """
 from inmanta_module_factory import inmanta
 
+STD_PURGEABLE_RESOURCE = inmanta.Entity(
+    name="PurgeableResource",
+    path=["std"],
+)
+
 TERRAFORM_CONFIG_BLOCK_ENTITY = inmanta.Entity(
     name="Block",
     path=["terraform", "config"],
@@ -41,6 +46,7 @@ BASE_RESOURCE_ENTITY = inmanta.Entity(
     name="BaseResource",
     path=BASE_ENTITY.path,
     description="This is the base entity for all resources in this module.",
+    parents=[STD_PURGEABLE_RESOURCE],
 )
 BASE_RESOURCE_ENTITY_INMANTA_ID = inmanta.Attribute(
     name="inmanta_id",
@@ -48,6 +54,14 @@ BASE_RESOURCE_ENTITY_INMANTA_ID = inmanta.Attribute(
     optional=False,
     default=None,
     description="This is the unique identifier of the resource",
+    entity=BASE_RESOURCE_ENTITY,
+)
+BASE_RESOURCE_ENTITY_IMPORT_ID = inmanta.Attribute(
+    name="import_id",
+    inmanta_type=inmanta.InmantaStringType,
+    optional=True,
+    default="null",
+    description="This attribute can be used to import an existing resource into the orchestrator.",
     entity=BASE_RESOURCE_ENTITY,
 )
 BASE_RESOURCE_ENTITY_TERRAFORM_RESOURCE_RELATION = inmanta.EntityRelation(

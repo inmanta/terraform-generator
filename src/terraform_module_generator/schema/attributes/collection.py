@@ -28,10 +28,8 @@ class CollectionAttribute(Attribute):
         self, module_builder: builder.InmantaModuleBuilder
     ) -> inmanta.InmantaType:
         inner_type = self.inner_type.inmanta_attribute_type(module_builder)
-        if isinstance(inner_type, inmanta.InmantaBaseType):
-            return inmanta.InmantaListType(inner_type)
-
-        return inmanta.InmantaAnyType
+        assert isinstance(inner_type, inmanta.InmantaBaseType)
+        return inmanta.InmantaListType(inner_type)
 
     @cache_method_result
     def nested_block_mock(self) -> mocks.NestedBlockMock:

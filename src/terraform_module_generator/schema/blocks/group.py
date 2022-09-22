@@ -21,8 +21,8 @@ def is_group(schema: Any) -> bool:
 class GroupNestedBlock(NestedBlock):
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder
+        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str]
     ) -> typing.Dict[str, str]:
-        attributes = super().get_config_block_attributes(module_builder)
+        attributes = super().get_config_block_attributes(module_builder, imports)
         attributes["nesting_mode"] = '"group"'
         return attributes

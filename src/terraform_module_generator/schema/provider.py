@@ -126,7 +126,7 @@ class Provider(Schema):
         module_builder.add_module_element(implementation)
 
         implement = inmanta.Implement(
-            path=implementation.path,
+            path=self.block.get_entity(module_builder).path,
             implementation=None,
             implementations=[implementation],
             entity=self.block.get_entity(module_builder),

@@ -52,9 +52,12 @@ class Resource(Schema):
             self.{const.BASE_RESOURCE_ENTITY_TERRAFORM_RESOURCE_RELATION.name} = terraform::Resource(
                 type="{self.name}",
                 name=self.{const.BASE_RESOURCE_ENTITY_INMANTA_ID.name},
+                terraform_id=self.{const.BASE_RESOURCE_ENTITY_IMPORT_ID.name},
                 root_config=self.{const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name},
                 manual_config=false,
                 provider=self.{self.provider.get_resource_relation(module_builder).peer.name}.{self.provider.get_terraform_provider_relation(module_builder).name},
+                purged=self.purged,
+                purge_on_delete=self.purge_on_delete,
             )
         """
         implementation_body = textwrap.dedent(implementation_body.strip("\n"))
@@ -70,7 +73,7 @@ class Resource(Schema):
         module_builder.add_module_element(implementation)
 
         implement = inmanta.Implement(
-            path=implementation.path,
+            path=self.get_entity(module_builder).path,
             implementation=None,
             implementations=[implementation],
             entity=self.get_entity(module_builder),

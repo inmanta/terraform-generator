@@ -33,9 +33,9 @@ class ListNestedBlock(NestedBlock):
 
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder
+        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str],
     ) -> typing.Dict[str, str]:
-        attributes = super().get_config_block_attributes(module_builder)
+        attributes = super().get_config_block_attributes(module_builder, imports)
         attributes["nesting_mode"] = '"list"'
         attributes["key"] = "self." + self.get_list_index_attribute(module_builder).name
         return attributes
