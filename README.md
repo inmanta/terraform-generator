@@ -17,25 +17,21 @@ Usage: __init__.py [OPTIONS] OUTPUT_DIR
 Options:
   --namespace TEXT                The namespace in the terraform registry
                                   where the provider relies.  [required]
-
   --type TEXT                     The name of the provider (not the display
                                   name).  [required]
-
   --version TEXT                  The version of the provider that should be
                                   used for this module generation.  [required]
-
   --cache-dir TEXT                A directory in which provider binaries
                                   should be downloaded an installed, and not
                                   cleaned up afterward.
-
   --license TEXT                  The copyright to use for the generated
                                   module.  You can choose between ('ASL 2.0',
                                   'Inmanta EULA').  Defaults to Inmanta EULA.
-
   --copyright-header-from-template-file TEXT
                                   Use the content of the provided file as
                                   copyright header.
-
+  --v1                            Generate a v1 module, generate a v2 module
+                                  if not set
   --help                          Show this message and exit.
 $ python src/__init__.py --namespace hashicorp --type local --version 2.1.0 --cache-dir /tmp/cache /tmp
 ```
@@ -74,23 +70,30 @@ Path(LOGGING_PATH).mkdir(parents=True, exist_ok=True)
 def generate_model(namespace: str, type: str, version: str) -> str:
     installer = ProviderInstaller(namespace, type, version)
     installer.resolve()
-    downloaded = installer.download(DOWNLOAD_PATH + f"/{namespace}-{type}-{version}")
+    installer.download(DOWNLOAD_PATH + f"/{namespace}-{type}-{version}")
     installed = installer.install(INSTALL_PATH, force=True)
 
     with TerraformProvider(
         installed, LOGGING_PATH + f"/{namespace}-{type}-{version}.log"
     ) as provider:
-        schema = provider.schema
+        provider_schema = provider.schema
 
     module = Module(type, version)
-    module_builder = InmantaModuleBuilder(module)
-
-    terraform_schema_parser = TerraformSchemaParser(
-        module_builder, namespace, type, version, module_name=type
+    module_builder = InmantaModuleBuilder(
+        module,
+        generation="v1" if v1 else "v2",
     )
-    terraform_schema_parser.parse_module(schema)
 
-    module_builder.generate_module(Path(OUTPUT_PATH), True)
+    terraform_module = schema.Module(
+        name=type,
+        schema=provider_schema,
+        namespace=namespace,
+        type=type,
+        version=version,
+    )
+    terraform_module.build(module_builder)
+
+    return module_builder.generate_module(Path(OUTPUT_PATH), True).path
 
 
 generate_model("hashicorp", "local", "2.1.0")

@@ -58,9 +58,9 @@ def generate_module(
     )
     terraform_module.build(module_builder)
 
-    module_builder.generate_module(
+    return module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl
-    )
+    ).path
 
 
 @click.command()
