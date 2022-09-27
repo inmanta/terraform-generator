@@ -16,6 +16,7 @@ from inmanta_plugins.terraform.tf.terraform_provider import TerraformProvider
 from inmanta_plugins.terraform.tf.terraform_provider_installer import ProviderInstaller
 
 from terraform_module_generator import schema
+from terraform_module_generator.inmanta_module_tests import upgrade_module_tests
 
 AVAILABLE_LICENSES = (
     ASL_2_0_LICENSE,
@@ -58,9 +59,12 @@ def generate_module(
     )
     terraform_module.build(module_builder)
 
-    return module_builder.generate_module(
+    inmanta_module = module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl
-    ).path
+    )
+    upgrade_module_tests(inmanta_module)
+
+    return inmanta_module.path
 
 
 @click.command()

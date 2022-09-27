@@ -34,11 +34,27 @@ class Provider(Schema):
         self, module_builder: builder.InmantaModuleBuilder
     ) -> inmanta.Attribute:
         return inmanta.Attribute(
-            name="alias",
+            name="_alias",
             inmanta_type=inmanta.InmantaStringType,
             optional=False,
             default='""',
             description="This is the unique identifier of the provider",
+            entity=self.block.get_entity(module_builder),
+        )
+
+    @cache_method_result
+    def get_provider_auto_agent_attribute(
+        self, module_builder: builder.InmantaModuleBuilder,
+    ) -> inmanta.Attribute:
+        return inmanta.Attribute(
+            name="_auto_agent",
+            inmanta_type=inmanta.InmantaBooleanType,
+            optional=False,
+            default="true",
+            description=(
+                "Whether to start an agent automatically or not.  "
+                "If set to false the relation agent_config should be set manually."
+            ),
             entity=self.block.get_entity(module_builder),
         )
 
@@ -110,6 +126,7 @@ class Provider(Schema):
                 version="{self.version}",
                 alias=self.{self.get_provider_alias_attribute(module_builder).name},
                 root_config=self.{const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name},
+                auto_agent=self.{self.get_provider_auto_agent_attribute(module_builder).name},
                 manual_config=false,
             )
         """

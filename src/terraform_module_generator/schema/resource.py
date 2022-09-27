@@ -55,7 +55,6 @@ class Resource(Schema):
                 terraform_id=self.{const.BASE_RESOURCE_ENTITY_IMPORT_ID.name},
                 root_config=self.{const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name},
                 manual_config=false,
-                auto_agent=self.{const.BASE_RESOURCE_ENTITY_AUTO_AGENT.name},
                 provider=self.{self.provider.get_resource_relation(module_builder).peer.name}.{self.provider.get_terraform_provider_relation(module_builder).name},
                 purged=self.purged,
                 purge_on_delete=self.purge_on_delete,

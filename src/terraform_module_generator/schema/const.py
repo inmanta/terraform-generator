@@ -56,17 +56,6 @@ BASE_RESOURCE_ENTITY_INMANTA_ID = inmanta.Attribute(
     description="This is the unique identifier of the resource",
     entity=BASE_RESOURCE_ENTITY,
 )
-BASE_RESOURCE_ENTITY_AUTO_AGENT = inmanta.Attribute(
-    name="_auto_agent",
-    inmanta_type=inmanta.InmantaBooleanType,
-    optional=False,
-    default="true",
-    description=(
-        "Whether to start an agent automatically or not.  "
-        "If set to false the relation agent_config should be set manually."
-    ),
-    entity=BASE_RESOURCE_ENTITY,
-)
 BASE_RESOURCE_ENTITY_IMPORT_ID = inmanta.Attribute(
     name="_import_id",
     inmanta_type=inmanta.InmantaStringType,
