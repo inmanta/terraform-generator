@@ -31,6 +31,7 @@ def generate_module(
     working_dir: str,
     license: Optional[str] = None,
     copyright_header_tmpl: Optional[str] = None,
+    v1: bool = True,
 ) -> str:
     installer = ProviderInstaller(namespace, type, version)
     installer.resolve()
@@ -43,7 +44,10 @@ def generate_module(
         provider_schema = provider.schema
 
     module = Module(type, version, license=license)
-    module_builder = InmantaModuleBuilder(module)
+    module_builder = InmantaModuleBuilder(
+        module,
+        generation="v1" if v1 else "v2",
+    )
 
     terraform_module = schema.Module(
         name=type,
@@ -93,6 +97,12 @@ def generate_module(
     help="Use the content of the provided file as copyright header.",
     required=False,
 )
+@click.option(
+    "--v1",
+    help="Generate a v1 module, generate a v2 module if not set",
+    is_flag=True,
+    default=False,
+)
 @click.argument(
     "output_dir",
     required=True,
@@ -104,6 +114,7 @@ def main(
     cache_dir: Optional[str],
     license: Optional[str],
     copyright_header_from_template_file: Optional[str],
+    v1: bool,
     output_dir: str,
 ) -> None:
     working_dir = cache_dir
@@ -135,6 +146,7 @@ def main(
         working_dir,
         license,
         copyright_header_tmpl,
+        v1,
     )
 
     if cache_dir is None:
