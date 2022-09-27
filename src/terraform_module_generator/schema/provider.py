@@ -44,7 +44,8 @@ class Provider(Schema):
 
     @cache_method_result
     def get_provider_auto_agent_attribute(
-        self, module_builder: builder.InmantaModuleBuilder,
+        self,
+        module_builder: builder.InmantaModuleBuilder,
     ) -> inmanta.Attribute:
         return inmanta.Attribute(
             name="_auto_agent",

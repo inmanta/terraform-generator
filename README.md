@@ -107,6 +107,7 @@ generate_model("hashicorp", "local", "2.1.0")
 | `CheckpointSW` | `checkpoint` | `1.4.0` |
 | `gitlabhq` | `gitlab` | `3.6.0` |
 | `integrations` | `github` | `4.10.1` |
+| `kreuzwerker` | `docker` | `2.22.0` |
 
 
 ## License
