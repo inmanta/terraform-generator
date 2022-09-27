@@ -87,7 +87,9 @@ class Block:
 
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str],
+        self,
+        module_builder: builder.InmantaModuleBuilder,
+        imports: typing.Set[str],
     ) -> typing.Dict[str, str]:
         attributes = "\n".join(
             [
@@ -112,7 +114,9 @@ class Block:
         imports: typing.Set[str] = set()
 
         config_block = "terraform::config::Block(\n"
-        for key, value in self.get_config_block_attributes(module_builder, imports).items():
+        for key, value in self.get_config_block_attributes(
+            module_builder, imports
+        ).items():
             field = f"{key}={value}"
             field = textwrap.indent(field, " " * 4)
             config_block += field + ",\n"

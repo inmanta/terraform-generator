@@ -4,13 +4,13 @@
     :license: Inmanta EULA
 """
 import re
-from typing import Any
 import typing
+from typing import Any
+
+from inmanta_module_factory import builder
 
 from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.helpers.cache import cache_method_result
-
-from inmanta_module_factory import builder
 
 from .base import attribute
 from .collection import CollectionAttribute
@@ -30,9 +30,16 @@ class SetAttribute(CollectionAttribute):
     regex = re.compile(r"set\((.+)\)")
 
     @cache_method_result
-    def get_serialized_attribute_expression(self, entity_reference: str, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str]) -> str:
+    def get_serialized_attribute_expression(
+        self,
+        entity_reference: str,
+        module_builder: builder.InmantaModuleBuilder,
+        imports: typing.Set[str],
+    ) -> str:
         # For sets we sort the list of values to make sure the config serialization is consistent
-        attribute_reference = super().get_serialized_attribute_expression(entity_reference, module_builder, imports)
+        attribute_reference = super().get_serialized_attribute_expression(
+            entity_reference, module_builder, imports
+        )
         imports.add("terraform")
         sorted_list = f"terraform::sorted_list({attribute_reference})"
 

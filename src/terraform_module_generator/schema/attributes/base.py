@@ -6,7 +6,7 @@
 import abc
 import typing
 
-from inmanta_module_factory import inmanta, builder
+from inmanta_module_factory import builder, inmanta
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
 
 from terraform_module_generator.schema.helpers.cache import cache_method_result
@@ -38,7 +38,9 @@ class Attribute:
         """
 
     @cache_method_result
-    def get_attribute(self, module_builder: builder.InmantaModuleBuilder) -> inmanta.Attribute:
+    def get_attribute(
+        self, module_builder: builder.InmantaModuleBuilder
+    ) -> inmanta.Attribute:
         """
         Return the entity field corresponding to this entity which should
         be added to the entity it is attached to.
@@ -62,7 +64,12 @@ class Attribute:
         )
 
     @cache_method_result
-    def get_serialized_attribute_expression(self, entity_reference: str, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str]) -> str:
+    def get_serialized_attribute_expression(
+        self,
+        entity_reference: str,
+        module_builder: builder.InmantaModuleBuilder,
+        imports: typing.Set[str],
+    ) -> str:
         # By default we consider the attribute to be serializable all by itself
         return f"{entity_reference}.{self.get_attribute(module_builder).name}"
 

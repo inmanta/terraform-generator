@@ -33,7 +33,9 @@ class MapNestedBlock(NestedBlock):
 
     @cache_method_result
     def get_config_block_attributes(
-        self, module_builder: builder.InmantaModuleBuilder, imports: typing.Set[str],
+        self,
+        module_builder: builder.InmantaModuleBuilder,
+        imports: typing.Set[str],
     ) -> typing.Dict[str, str]:
         attributes = super().get_config_block_attributes(module_builder, imports)
         attributes["nesting_mode"] = '"map"'
