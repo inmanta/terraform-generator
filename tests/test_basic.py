@@ -59,7 +59,7 @@ def test_generate_module(
     result = subprocess.run(
         [
             sys.executable,
-            "src/__init__.py",
+            "src/terraform_module_generator/cli.py",
             f"--namespace={namespace}",
             f"--type={provider_type}",
             f"--version={version}",
