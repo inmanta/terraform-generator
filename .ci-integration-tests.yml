@@ -3,3 +3,4 @@ repo_name: terraform-generator
 directories_to_lint:
   - src
   - tests
+mypy_mode: "fail"
