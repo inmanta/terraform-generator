@@ -34,7 +34,7 @@ class CollectionAttribute(Attribute):
     @cache_method_result
     def nested_block_mock(self) -> mocks.NestedBlockMock:
         """
-        This method allows attributes to be converted to entities, as inmanta has no notion of a `structured attribute`. 
+        This method allows attributes to be converted to entities, as inmanta has no notion of a `structured attribute`.
         This method can only be called if the inner type of the attribute is a structure.
         It will return a NestedBlock object, similar to the one we would get from the provider
         schema, defined here:
