@@ -155,3 +155,7 @@ def main(
 
     if cache_dir is None:
         shutil.rmtree(working_dir)
+
+
+if __name__ == "__main__":
+    main()

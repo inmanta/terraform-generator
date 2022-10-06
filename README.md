@@ -11,7 +11,7 @@ In order to generate a module, you will need to provide the following informatio
 ### Using the CLI
 
 ```console
-$ python src/__init__.py --help
+$ python src/terraform_module_generator/cli.py --help
 Usage: __init__.py [OPTIONS] OUTPUT_DIR
 
 Options:
