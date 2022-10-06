@@ -3,9 +3,9 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
-import typing
-import re
 import abc
+import re
+import typing
 
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
 

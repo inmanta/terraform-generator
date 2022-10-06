@@ -3,7 +3,6 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
-from sys import implementation
 import textwrap
 import typing
 
@@ -28,7 +27,14 @@ class Block:
 
         nested_blocks: typing.List[mocks.NestedBlockMock] = []
         self.attributes: typing.List[Attribute] = []
+
         for attribute in Block.get_attributes(path + [inmanta_safe_name(name)], schema):
+            # For each of the attributes of this block, instead of simply considering
+            # them as attributes, we first check if some of them could be converted to
+            # entities.  This is only the case if the attribute type is a structure, or
+            # a collection of structures.  In those case, instead of adding the attribute
+            # as an attribute to the block, we will build a nested block and add it to
+            # this block.
             if isinstance(attribute, StructureAttribute):
                 nested_blocks.append(
                     mocks.NestedBlockMock(

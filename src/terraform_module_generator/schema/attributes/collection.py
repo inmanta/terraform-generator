@@ -3,8 +3,8 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
-import typing
 import re
+import typing
 
 from inmanta_module_factory import builder, inmanta
 
@@ -33,6 +33,16 @@ class CollectionAttribute(Attribute):
 
     @cache_method_result
     def nested_block_mock(self) -> mocks.NestedBlockMock:
+        """
+        This method can only be called if the inner type of the attribute is a structure.
+        It will return a NestedBlock object, similar to the one we would get from the provider
+        schema, defined here:
+            https://github.com/hashicorp/terraform/blob/1faa05b34409e9af5636abcb8b0d474c30cd4103/
+            docs/plugin-protocol/tfplugin5.3.proto#L102
+
+        As this is not possible for us to actually create a protobuf object, we simply build an
+        object with matching attributes.
+        """
         assert isinstance(self.inner_type, StructureAttribute)
 
         return mocks.NestedBlockMock(
