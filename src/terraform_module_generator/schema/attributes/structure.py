@@ -35,6 +35,22 @@ class StructureAttribute(Attribute):
             deprecated=self.deprecated,
         )
 
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        return mocks.NestedBlockMock(
+            type_name=self.name,
+            block=mocks.BlockMock(
+                version=0,
+                attributes=[attr._source_attribute for attr in self.inner_attributes],
+                block_types=[],
+                description=self.description,
+                description_kind=self.description_kind,
+                deprecated=self.deprecated,
+            ),
+            nesting=1,  # SINGLE
+            min_items=0 if self.optional else 1,
+            max_items=1,
+        )
+
     @classmethod
     def get_inner_attributes_expression(cls, schema: typing.Any) -> str:
         t = schema.type.decode("utf-8")

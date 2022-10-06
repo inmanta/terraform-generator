@@ -9,6 +9,7 @@ import typing
 from inmanta_module_factory import builder, inmanta
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
 
+from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
@@ -72,6 +73,25 @@ class Attribute:
     ) -> str:
         # By default we consider the attribute to be serializable all by itself
         return f"{entity_reference}.{self.get_attribute(module_builder).name}"
+
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        """
+        If supported by the attribute type, return a NestedBlock object, similar to the one we would
+        get from the provider schema, defined here:
+            https://github.com/hashicorp/terraform/blob/1faa05b34409e9af5636abcb8b0d474c30cd4103/
+            docs/plugin-protocol/tfplugin5.3.proto#L102
+
+        As this is not possible for us to actually create a protobuf object, we simply build an
+        object with matching attributes.
+
+        The intent behind this method, is to allow converting structure attributes to entities, as
+        inmanta has no notion of such type of attributes.
+
+        If this is not supported by the attribute type, it should raise a NotImplementedError
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} can not be converted to a nested block."
+        )
 
     @classmethod
     def register_attribute_type(

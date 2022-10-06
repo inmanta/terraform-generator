@@ -7,7 +7,6 @@ import re
 from typing import Any
 
 from terraform_module_generator.schema import mocks
-from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 from .base import attribute
 from .collection import CollectionAttribute
@@ -26,8 +25,7 @@ class ListAttribute(CollectionAttribute):
     legacy_regex = re.compile(r'\["list",(.+)\]')
     regex = re.compile(r"list\((.+)\)")
 
-    @cache_method_result
-    def nested_block_mock(self) -> mocks.NestedBlockMock:
-        nested_block = super().nested_block_mock()
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        nested_block = super().as_nested_block()
         nested_block.nesting = 2  # LIST
         return nested_block

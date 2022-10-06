@@ -10,7 +10,6 @@ from inmanta_module_factory import builder, inmanta
 
 from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.attributes.base import Attribute
-from terraform_module_generator.schema.attributes.structure import StructureAttribute
 from terraform_module_generator.schema.helpers.cache import cache_method_result
 from terraform_module_generator.schema.mocks import AttributeMock
 
@@ -31,28 +30,12 @@ class CollectionAttribute(Attribute):
         assert isinstance(inner_type, inmanta.InmantaBaseType)
         return inmanta.InmantaListType(inner_type)
 
-    @cache_method_result
-    def nested_block_mock(self) -> mocks.NestedBlockMock:
-        """
-        This method allows attributes to be converted to entities, as inmanta has no notion of a `structured attribute`.
-        This method can only be called if the inner type of the attribute is a structure.
-        It will return a NestedBlock object, similar to the one we would get from the provider
-        schema, defined here:
-            https://github.com/hashicorp/terraform/blob/1faa05b34409e9af5636abcb8b0d474c30cd4103/
-            docs/plugin-protocol/tfplugin5.3.proto#L102
-
-        As this is not possible for us to actually create a protobuf object, we simply build an
-        object with matching attributes.
-        """
-        assert isinstance(self.inner_type, StructureAttribute)
-
-        return mocks.NestedBlockMock(
-            type_name=self.name,
-            block=self.inner_type.block_mock(),
-            nesting=0,  # This will have to be overwritten in sub-classes
-            min_items=0,
-            max_items=0,  # No upper bound
-        )
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        nested_block_mock = self.inner_type.as_nested_block()
+        nested_block_mock.nesting = 0  # This will have to be overwritten in sub-classes
+        nested_block_mock.min_items = 0  # No lower bound
+        nested_block_mock.max_items = 0  # No upper bound
+        return nested_block_mock
 
     @classmethod
     def get_inner_type_expression(cls, schema: typing.Any) -> bytes:

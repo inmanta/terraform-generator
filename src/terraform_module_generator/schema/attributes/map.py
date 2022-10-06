@@ -34,8 +34,7 @@ class MapAttribute(CollectionAttribute):
     ) -> inmanta.InmantaType:
         return inmanta.InmantaDictType
 
-    @cache_method_result
-    def nested_block_mock(self) -> mocks.NestedBlockMock:
-        nested_block = super().nested_block_mock()
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        nested_block = super().as_nested_block()
         nested_block.nesting = 4  # MAP
         return nested_block

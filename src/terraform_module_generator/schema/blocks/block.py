@@ -11,8 +11,6 @@ from inmanta_module_factory.helpers.utils import inmanta_entity_name, inmanta_sa
 
 from terraform_module_generator.schema import const, mocks
 from terraform_module_generator.schema.attributes.base import Attribute
-from terraform_module_generator.schema.attributes.collection import CollectionAttribute
-from terraform_module_generator.schema.attributes.structure import StructureAttribute
 from terraform_module_generator.schema.helpers.cache import cache_method_result
 from terraform_module_generator.schema.mocks.nested_block import NestedBlockMock
 
@@ -35,27 +33,10 @@ class Block:
             # a collection of structures.  In those case, instead of adding the attribute
             # as an attribute to the block, we will build a nested block and add it to
             # this block.
-            if isinstance(attribute, StructureAttribute):
-                nested_blocks.append(
-                    mocks.NestedBlockMock(
-                        type_name=attribute.name,
-                        block=attribute.block_mock(),
-                        nesting=1,  # SINGLE
-                        min_items=0 if attribute.optional else 1,
-                        max_items=1,
-                    )
-                )
-                continue
-
-            if not isinstance(attribute, CollectionAttribute):
+            try:
+                nested_blocks.append(attribute.as_nested_block())
+            except NotImplementedError:
                 self.attributes.append(attribute)
-                continue
-
-            if not isinstance(attribute.inner_type, StructureAttribute):
-                self.attributes.append(attribute)
-                continue
-
-            nested_blocks.append(attribute.nested_block_mock())
 
         self.nested_blocks = Block.get_nested_blocks(
             path + [inmanta_safe_name(name)],

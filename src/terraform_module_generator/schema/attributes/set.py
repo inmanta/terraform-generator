@@ -48,8 +48,7 @@ class SetAttribute(CollectionAttribute):
         else:
             return sorted_list
 
-    @cache_method_result
-    def nested_block_mock(self) -> mocks.NestedBlockMock:
-        nested_block = super().nested_block_mock()
+    def as_nested_block(self) -> mocks.NestedBlockMock:
+        nested_block = super().as_nested_block()
         nested_block.nesting = 3  # SET
         return nested_block
