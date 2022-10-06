@@ -13,11 +13,11 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 from .nested_block import NestedBlock, nested_block
 
 
-def is_set(schema: Any) -> bool:
+def is_block_set(schema: Any) -> bool:
     return schema.nesting == 3
 
 
-@nested_block(index="abc-set-z", condition=is_set)
+@nested_block(index="abc-set-z", condition=is_block_set)
 class SetNestedBlock(NestedBlock):
     @cache_method_result
     def get_config_block_attributes(

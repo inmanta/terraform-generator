@@ -30,7 +30,7 @@ def generate_module(
     version: str,
     output_dir: str,
     working_dir: str,
-    license: Optional[str] = None,
+    license: str,
     copyright_header_tmpl: Optional[str] = None,
     v1: bool = True,
 ) -> str:
@@ -122,7 +122,7 @@ def main(
     output_dir: str,
 ) -> None:
     working_dir = cache_dir
-    if cache_dir is None:
+    if working_dir is None:
         working_dir = tempfile.mkdtemp()
 
     if license is None:

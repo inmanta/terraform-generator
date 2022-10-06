@@ -4,3 +4,5 @@ trace.txt
 *.cf
 output/
 *.egg-info/
+.mypy_cache
+.pytest_cache

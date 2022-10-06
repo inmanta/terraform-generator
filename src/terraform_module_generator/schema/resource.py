@@ -28,7 +28,10 @@ class Resource(Schema):
         self, module_builder: builder.InmantaModuleBuilder
     ) -> inmanta.Entity:
         entity = self.block.get_entity(module_builder)
-        entity.parents.append(const.BASE_RESOURCE_ENTITY)
+
+        # The parents attribute of the entity is a sequence, we are not supposed to update
+        # it.  We do it anyway because going around it would be too complicated.
+        entity.parents.append(const.BASE_RESOURCE_ENTITY)  # type: ignore
         return entity
 
     @cache_method_result
@@ -80,7 +83,7 @@ class Resource(Schema):
         )
         module_builder.add_module_element(implement)
 
-        return module_builder
+        return implementation
 
     def add_to_module(self, module_builder: builder.InmantaModuleBuilder) -> None:
         # Add the index

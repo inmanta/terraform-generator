@@ -4,10 +4,10 @@
     :license: Inmanta EULA
 """
 import typing
-from abc import abstractclassmethod
+import re
+import abc
 
 from inmanta_module_factory.helpers.utils import inmanta_safe_name
-from regex import Pattern
 
 from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.attributes.base import Attribute
@@ -15,8 +15,8 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
 class StructureAttribute(Attribute):
-    legacy_regex: Pattern[str]
-    regex: Pattern[str]
+    legacy_regex: re.Pattern[str]
+    regex: re.Pattern[str]
 
     def __init__(self, path: typing.List[str], schema: typing.Any) -> None:
         Attribute.__init__(self, path, schema)
@@ -48,7 +48,8 @@ class StructureAttribute(Attribute):
 
         raise ValueError(f"Failed to match type: {t}")
 
-    @abstractclassmethod
+    @classmethod
+    @abc.abstractmethod
     def get_inner_attributes(
         cls, path: typing.List[str], schema: typing.Any
     ) -> typing.List[Attribute]:

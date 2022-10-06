@@ -3,6 +3,7 @@
     :contact: code@inmanta.com
     :license: Inmanta EULA
 """
+from sys import implementation
 import textwrap
 import typing
 
@@ -182,8 +183,9 @@ class Block:
         self, module_builder: builder.InmantaModuleBuilder
     ) -> inmanta.Implement:
         implementations = [self.get_config_implementation(module_builder)]
-        if self.get_state_implementation(module_builder) is not None:
-            implementations.append(self.get_state_implementation(module_builder))
+        implementation = self.get_state_implementation(module_builder)
+        if implementation is not None:
+            implementations.append(implementation)
 
         implement = inmanta.Implement(
             path=self.get_entity(module_builder).path,

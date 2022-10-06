@@ -13,11 +13,11 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 from .nested_block import NestedBlock, nested_block
 
 
-def is_map(schema: Any) -> bool:
+def is_block_map(schema: Any) -> bool:
     return schema.nesting == 4
 
 
-@nested_block(index="abc-map-z", condition=is_map)
+@nested_block(index="abc-map-z", condition=is_block_map)
 class MapNestedBlock(NestedBlock):
     @cache_method_result
     def get_map_key_attribute(

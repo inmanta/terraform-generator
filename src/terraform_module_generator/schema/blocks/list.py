@@ -13,11 +13,11 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 from .nested_block import NestedBlock, nested_block
 
 
-def is_list(schema: Any) -> bool:
+def is_block_list(schema: Any) -> bool:
     return schema.nesting == 2
 
 
-@nested_block(index="abc-list-z", condition=is_list)
+@nested_block(index="abc-list-z", condition=is_block_list)
 class ListNestedBlock(NestedBlock):
     @cache_method_result
     def get_list_index_attribute(

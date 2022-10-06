@@ -4,9 +4,9 @@
     :license: Inmanta EULA
 """
 import typing
+import re
 
 from inmanta_module_factory import builder, inmanta
-from regex import Pattern
 
 from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.attributes.base import Attribute
@@ -16,8 +16,8 @@ from terraform_module_generator.schema.mocks import AttributeMock
 
 
 class CollectionAttribute(Attribute):
-    legacy_regex: Pattern[str]
-    regex: Pattern[str]
+    legacy_regex: re.Pattern[str]
+    regex: re.Pattern[str]
 
     def __init__(self, path: typing.List[str], schema: typing.Any) -> None:
         super().__init__(path, schema)

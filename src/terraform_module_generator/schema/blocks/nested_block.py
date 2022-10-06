@@ -16,7 +16,7 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 class NestedBlock(block.Block):
     __nested_block_types: Dict[
-        str, Tuple[Callable[[Any, bool], Type["NestedBlock"]]]
+        str, Tuple[Callable[[Any], bool], Type["NestedBlock"]]
     ] = dict()
 
     def __init__(self, path: List[str], schema: Any) -> None:

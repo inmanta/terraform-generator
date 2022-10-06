@@ -24,4 +24,4 @@ def cache_method_result(func: F) -> F:
 
         return getattr(self, func_result_attribute)
 
-    return cache
+    return cache  # type: ignore

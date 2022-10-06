@@ -27,7 +27,7 @@ class Provider(Schema):
         self.name = name
         self.namespace = namespace
         self.type = type
-        self.version = version
+        self.provider_version = version
 
     @cache_method_result
     def get_provider_alias_attribute(
@@ -124,7 +124,7 @@ class Provider(Schema):
             self.{self.get_terraform_provider_relation(module_builder).name} = terraform::Provider(
                 namespace="{self.namespace}",
                 type="{self.type}",
-                version="{self.version}",
+                version="{self.provider_version}",
                 alias=self.{self.get_provider_alias_attribute(module_builder).name},
                 root_config=self.{const.BASE_ENTITY_CONFIG_BLOCK_RELATION.name},
                 auto_agent=self.{self.get_provider_auto_agent_attribute(module_builder).name},
@@ -151,7 +151,7 @@ class Provider(Schema):
         )
         module_builder.add_module_element(implement)
 
-        return module_builder
+        return implementation
 
     def add_to_module(self, module_builder: builder.InmantaModuleBuilder) -> None:
         # Add the index

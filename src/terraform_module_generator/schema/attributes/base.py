@@ -14,7 +14,7 @@ from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 class Attribute:
     __attribute_types: typing.Dict[
-        str, typing.Tuple[typing.Callable[[bool], typing.Type["Attribute"]]]
+        str, typing.Tuple[typing.Callable[[typing.Any], bool], typing.Type["Attribute"]]
     ] = dict()
 
     def __init__(self, path: typing.List[str], schema: typing.Any) -> None:
