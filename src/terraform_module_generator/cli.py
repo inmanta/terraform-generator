@@ -15,7 +15,8 @@ from inmanta_module_factory.inmanta.module import Module
 from inmanta_plugins.terraform.tf.terraform_provider import TerraformProvider
 from inmanta_plugins.terraform.tf.terraform_provider_installer import ProviderInstaller
 
-from terraform_module_generator.terraform_schema_parser import TerraformSchemaParser
+from terraform_module_generator import schema
+from terraform_module_generator.inmanta_module_tests import upgrade_module_tests
 
 AVAILABLE_LICENSES = (
     ASL_2_0_LICENSE,
@@ -29,8 +30,9 @@ def generate_module(
     version: str,
     output_dir: str,
     working_dir: str,
-    license: Optional[str] = None,
+    license: str,
     copyright_header_tmpl: Optional[str] = None,
+    v1: bool = True,
 ) -> str:
     installer = ProviderInstaller(namespace, type, version)
     installer.resolve()
@@ -40,19 +42,29 @@ def generate_module(
     with TerraformProvider(
         installed, working_dir + f"/{namespace}-{type}-{version}.log"
     ) as provider:
-        schema = provider.schema
+        provider_schema = provider.schema
 
     module = Module(type, version, license=license)
-    module_builder = InmantaModuleBuilder(module)
-
-    terraform_schema_parser = TerraformSchemaParser(
-        module_builder, namespace, type, version, module_name=type
+    module_builder = InmantaModuleBuilder(
+        module,
+        generation="v1" if v1 else "v2",
     )
-    terraform_schema_parser.parse_module(schema)
 
-    module_builder.generate_module(
+    terraform_module = schema.Module(
+        name=type,
+        schema=provider_schema,
+        namespace=namespace,
+        type=type,
+        version=version,
+    )
+    terraform_module.build(module_builder)
+
+    inmanta_module = module_builder.generate_module(
         Path(output_dir), True, copyright_header_template=copyright_header_tmpl
     )
+    upgrade_module_tests(inmanta_module)
+
+    return inmanta_module.path
 
 
 @click.command()
@@ -89,6 +101,12 @@ def generate_module(
     help="Use the content of the provided file as copyright header.",
     required=False,
 )
+@click.option(
+    "--v1",
+    help="Generate a v1 module, generate a v2 module if not set",
+    is_flag=True,
+    default=False,
+)
 @click.argument(
     "output_dir",
     required=True,
@@ -100,10 +118,11 @@ def main(
     cache_dir: Optional[str],
     license: Optional[str],
     copyright_header_from_template_file: Optional[str],
+    v1: bool,
     output_dir: str,
 ) -> None:
     working_dir = cache_dir
-    if cache_dir is None:
+    if working_dir is None:
         working_dir = tempfile.mkdtemp()
 
     if license is None:
@@ -131,7 +150,12 @@ def main(
         working_dir,
         license,
         copyright_header_tmpl,
+        v1,
     )
 
     if cache_dir is None:
         shutil.rmtree(working_dir)
+
+
+if __name__ == "__main__":
+    main()
