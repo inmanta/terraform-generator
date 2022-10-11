@@ -11,7 +11,6 @@ from inmanta_module_factory.helpers.utils import inmanta_safe_name
 
 from terraform_module_generator.schema import mocks
 from terraform_module_generator.schema.attributes.base import Attribute
-from terraform_module_generator.schema.helpers.cache import cache_method_result
 
 
 class StructureAttribute(Attribute):
@@ -22,17 +21,6 @@ class StructureAttribute(Attribute):
         Attribute.__init__(self, path, schema)
         self.inner_attributes = self.get_inner_attributes(
             path + [inmanta_safe_name(self.name)], schema
-        )
-
-    @cache_method_result
-    def block_mock(self) -> mocks.BlockMock:
-        return mocks.BlockMock(
-            version=0,
-            attributes=[attr._source_attribute for attr in self.inner_attributes],
-            block_types=[],
-            description=self.description,
-            description_kind=self.description_kind,
-            deprecated=self.deprecated,
         )
 
     def as_nested_block(self) -> mocks.NestedBlockMock:
