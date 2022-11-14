@@ -1,1 +1,1 @@
-inmanta-dev-dependencies[module]~=2.44
+inmanta-dev-dependencies[module]~=2.45
