@@ -4,4 +4,4 @@ msgpack==1.0.5
 requests==2.31.0
 nltk==3.8.1
 click==8.1.5
-PyYAML==6.0
+PyYAML==6.0.1
